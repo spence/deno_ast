@@ -278,6 +278,7 @@ mod test {
   use crate::swc::ast::Module;
   use crate::swc::codegen::text_writer::JsWriter;
   use crate::swc::codegen::Node;
+  use crate::swc::common::sync::Lrc;
   use crate::swc::common::FileName;
   use crate::swc::common::SourceMap;
   use crate::swc::parser::Parser;
@@ -288,7 +289,6 @@ mod test {
   use crate::swc::visit::FoldWith;
   use crate::ModuleSpecifier;
   use pretty_assertions::assert_eq;
-  use std::rc::Rc;
 
   use super::*;
 
@@ -488,8 +488,8 @@ mod test {
     assert_eq!(output, format!("{}\n", expected_output));
   }
 
-  fn parse(src: &str) -> (Rc<SourceMap>, Module) {
-    let source_map = Rc::new(SourceMap::default());
+  fn parse(src: &str) -> (Lrc<SourceMap>, Module) {
+    let source_map = Lrc::new(SourceMap::default());
     let source_file = source_map.new_source_file(
       FileName::Url(ModuleSpecifier::parse("file:///test.ts").unwrap()),
       src.to_string(),
@@ -502,7 +502,7 @@ mod test {
     (source_map, parser.parse_module().unwrap())
   }
 
-  fn print(source_map: Rc<SourceMap>, module: Module) -> String {
+  fn print(source_map: Lrc<SourceMap>, module: Module) -> String {
     let mut buf = vec![];
     {
       let mut writer =
